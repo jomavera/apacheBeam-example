@@ -234,7 +234,8 @@ def run():
     with beam.Pipeline(options=options) as p:
 
             immigration_data = (
-                p | 'Read Immigration Data' >> beam.io.parquetio.ReadFromParquet(p.options.input_dir.get()+'data.parquet\*').\
+                p | 'Read Immigration Data' >> beam.io.parquetio.\
+                    ReadFromParquet(p.options.input_dir.get()+'data.parquet\*').\
                     with_output_types(ImmigrationData) |
                 'Immigration dictionary collection to row' >> beam.Map(ToRowImmigration) 
             )
@@ -242,7 +243,8 @@ def run():
             df_immigration = to_dataframe(immigration_data)
 
             cities_data = (
-                p | 'Read city data' >> beam.io.ReadFromText(p.options.input_dir.get()+'us-cities-demographics.csv', skip_header_lines=1) |
+                p | 'Read city data' >> beam.io.\
+                    ReadFromText(p.options.input_dir.get()+'us-cities-demographics.csv', skip_header_lines=1) |
                 'Parse city data' >> beam.ParDo(SplitCityData()) |
                 'Get average demographics per State' >> beam.CombinePerKey(AverageDictFn())  |
                 'Key to Column' >> beam.ParDo(OrganizeCityData()).with_output_types(CityData) |
@@ -254,7 +256,8 @@ def run():
             df_immigration = df_immigration.join(df_cities, rsuffix='_city')
 
             airport_data = (
-                p | "Read airport data" >> beam.io.ReadFromText(p.options.input_dir.get()+'airport-codes_csv_2.csv', skip_header_lines=1) |
+                p | "Read airport data" >> beam.io.\
+                    ReadFromText(p.options.input_dir.get()+'airport-codes_csv_2.csv', skip_header_lines=1) |
                 "Parse airport data" >> beam.ParDo(SplitAirportData()).with_output_types(AirportData) |
                 'Airport dictionary collection to row' >> beam.Map(ToRowAirport)
             )
