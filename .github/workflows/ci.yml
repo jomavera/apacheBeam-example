@@ -33,3 +33,16 @@ jobs:
     # You can test your matrix by printing the current Python version
     - name: Display Python version
       run: python -c "import sys; print(sys.version)"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install black flake8 pytest hypothesis isort pylint
+    - name: Run black
+      run:
+        black --check . --exclude docs/
+    - name: Run flake8
+      run: flake8 pipeline.py
+    - name: Run pylint
+      run: pylint pipeline.py
+    - name: Run isort
+      run: isort --profile black pipeline.py
