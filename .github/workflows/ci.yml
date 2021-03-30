@@ -40,9 +40,5 @@ jobs:
     - name: Run black
       run:
         black --check . --exclude docs/
-    - name: Run flake8
-      run: flake8 pipeline.py
-    - name: Run pylint
-      run: pylint pipeline.py
     - name: Run isort
       run: isort --profile black pipeline.py
