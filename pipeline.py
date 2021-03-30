@@ -1,12 +1,9 @@
-import argparse
-import logging
+import datetime
 import typing
-import datetime, os
+
 import apache_beam as beam
 from apache_beam.dataframe.convert import to_dataframe, to_pcollection
-import math
 from apache_beam.options.pipeline_options import PipelineOptions
-from apache_beam.options.value_provider import RuntimeValueProvider
 
 # ---#---#---# CUSTOM OPTIONS #---#---#---#
 
@@ -71,7 +68,7 @@ class AverageDictFn(beam.CombineFn):
     def add_input(self, accumulator, input):
         sum, count = accumulator
         for key in list(input.keys()):
-            if input[key] != None:
+            if input[key] is not None:
                 if key in sum:
                     sum[key] += input[key]
                     count[key] += 1
@@ -161,7 +158,8 @@ class SplitCityData(beam.DoFn):
             (
                 state_code,
                 {
-                    "median_age": float(median_age) if median_age != "" else None,
+                    "median_age": float(median_age)
+                    if median_age != "" else None,
                     "male_population": int(male_population)
                     if male_population != ""
                     else None,
@@ -174,7 +172,8 @@ class SplitCityData(beam.DoFn):
                     "number_veterans": int(number_veterans)
                     if number_veterans != ""
                     else None,
-                    "foreign_born": int(foreign_born) if foreign_born != "" else None,
+                    "foreign_born": int(foreign_born)
+                    if foreign_born != "" else None,
                     "average_household_size": float(average_household_size)
                     if average_household_size != ""
                     else None,
@@ -231,8 +230,8 @@ class OrganizeCityData(beam.DoFn):
 def ToRowImmigration(values):
 
     return beam.Row(
-        arrdate=int(values["arrdate"]) if values["arrdate"] != None else 0,
-        depdate=int(values["depdate"]) if values["depdate"] != None else 0,
+        arrdate=int(values["arrdate"]) if values["arrdate"] is not None else 0,
+        depdate=int(values["depdate"]) if values["depdate"] is not None else 0,
         i94mon=int(values["i94mon"]) if "i94mon" in values.keys() else int("NaN"),
         i94visa=int(values["i94visa"]) if "i94visa" in values.keys() else int("NaN"),
         i94port=str(values["i94port"]) if "i94port" in values.keys() else str("NaN"),
