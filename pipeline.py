@@ -133,12 +133,15 @@ class SplitCityData(beam.DoFn):
         return [(
             state_code,{
                 'median_age': float(median_age) if median_age != '' else None,
-                'male_population': int(male_population) if male_population != '' else None,
-                'female_population': int(female_population) if female_population != '' else None,
+                'male_population': int(male_population) if\
+                    male_population != '' else None,
+                'female_population': int(female_population) if\
+                    female_population != '' else None,
                 'total_population': int(total_population) if total_population != '' else None,
                 'number_veterans': int(number_veterans) if number_veterans != '' else None,
                 'foreign_born': int(foreign_born) if foreign_born != '' else None,
-                'average_household_size' : float(average_household_size) if average_household_size != '' else None
+                'average_household_size' : float(average_household_size) if \
+                    average_household_size != '' else None
             }   
         )]
 
@@ -149,8 +152,10 @@ class SplitTempData(beam.DoFn):
         
         return [({
                 'dt': datetime.datetime.strptime(dt, '%Y-%m-%d') if dt != '' else None,
-                'AverageTemperature': float(AverageTemperature) if AverageTemperature != '' else None,
-                'AverageTemperatureUncertainty': float(AverageTemperatureUncertainty) if AverageTemperatureUncertainty != '' else None,
+                'AverageTemperature': float(AverageTemperature) if\
+                    AverageTemperature != '' else None,
+                'AverageTemperatureUncertainty': float(AverageTemperatureUncertainty) if\
+                     AverageTemperatureUncertainty != '' else None,
                 'City': str(City) if City != '' else None,
                 'Country': str(Country) if Country != '' else None,
                 'Latitude': str(Latitude) if Latitude != '' else None,
@@ -183,13 +188,20 @@ def ToRowImmigration(values):
 def ToRowCity(values):
 
     return beam.Row(
-        avg_median_age = float(values['avg_median_age']) if 'avg_median_age' in values.keys() else float('NaN'),
-        avg_male_population = float(values['avg_male_population']) if 'avg_male_population' in values.keys() else float('NaN'),
-        avg_female_population = float(values['avg_female_population']) if 'avg_female_population' in values.keys() else float('NaN'),
-        avg_total_population = float(values['avg_total_population']) if 'avg_total_population' in values.keys() else float('NaN'),
-        avg_number_veterans = float(values['avg_number_veterans']) if 'avg_number_veterans' in values.keys() else float('NaN'),
-        avg_foreign_born = float(values['avg_foreign_born']) if 'avg_foreign_born' in values.keys() else float('NaN'),
-        avg_average_household_size = float(values['avg_average_household_size']) if 'avg_average_household_size' in values.keys() else float('NaN'),
+        avg_median_age = float(values['avg_median_age']) if\
+            'avg_median_age' in values.keys() else float('NaN'),
+        avg_male_population = float(values['avg_male_population']) if\
+            'avg_male_population' in values.keys() else float('NaN'),
+        avg_female_population = float(values['avg_female_population']) if\
+            'avg_female_population' in values.keys() else float('NaN'),
+        avg_total_population = float(values['avg_total_population']) if\
+            'avg_total_population' in values.keys() else float('NaN'),
+        avg_number_veterans = float(values['avg_number_veterans']) if\
+            'avg_number_veterans' in values.keys() else float('NaN'),
+        avg_foreign_born = float(values['avg_foreign_born']) if\
+            'avg_foreign_born' in values.keys() else float('NaN'),
+        avg_average_household_size = float(values['avg_average_household_size']) if\
+            'avg_average_household_size' in values.keys() else float('NaN'),
         i94addr = str(values['i94addr'])
     )
 
@@ -197,16 +209,19 @@ def ToRowAirport(values):
 
     return beam.Row(
         i94port = str(values['i94port']) if 'i94port' in values.keys() else str('NaN'),
-        municipality = str(values['municipality']) if 'municipality' in values.keys() else str('NaN')
+        municipality = str(values['municipality']) if\
+            'municipality' in values.keys() else str('NaN')
     )
 
 class FilterAndToRowTemperature(beam.DoFn):
     def process(self, element):
 
-        if (element['dt'] > datetime.datetime(2011,12,31,23,59,0,0)) and (element['dt'] < datetime.datetime(2013,1,1,0,0,0,0)):
+        if (element['dt'] > datetime.datetime(2011,12,31,23,59,0,0)) and \
+            (element['dt'] < datetime.datetime(2013,1,1,0,0,0,0)):
             return [beam.Row(
                 dt = element['dt'] if 'dt' in element.keys() else str('NaN'),
-                avg_temp = float(element['AverageTemperature']) if 'AverageTemperature' in element.keys() else str('NaN'),
+                avg_temp = float(element['AverageTemperature']) if\
+                    'AverageTemperature' in element.keys() else str('NaN'),
                 municipality = str(element['City']) if 'City' in element.keys() else str('NaN'),
                 country = str(element['Country']) if 'Country' in element.keys() else str('NaN'),
                 month = element['dt'].month if 'dt' in element.keys() else str('NaN')
@@ -219,7 +234,8 @@ def run():
     with beam.Pipeline(options=options) as p:
 
             immigration_data = (
-                p | 'Read Immigration Data' >> beam.io.parquetio.ReadFromParquet(p.options.input_dir.get()+'data.parquet\*').with_output_types(ImmigrationData) |
+                p | 'Read Immigration Data' >> beam.io.parquetio.ReadFromParquet(p.options.input_dir.get()+'data.parquet\*').\
+                    with_output_types(ImmigrationData) |
                 'Immigration dictionary collection to row' >> beam.Map(ToRowImmigration) 
             )
 
