@@ -380,7 +380,9 @@ def run():
         #                                 (df_immigration_2.municipality == df_temperature.municipality) \
         #                                 & (df_immigration_2.i94mon == df_temperature.month ), 'left')
 
-        output = join_data | beam.io.WriteToText(p.options.output_dir.get())
+        output = join_data | "Save data to file" >> beam.io.WriteToText(
+            p.options.output_dir.get()
+        )
 
 
 if __name__ == "__main__":
