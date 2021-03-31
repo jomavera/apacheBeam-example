@@ -336,6 +336,7 @@ def run():
 
         df_cities = to_dataframe(cities_data)
 
+        df_immigration = df_immigration[df_immigration["i94addr"].notna()]
         df_immigration = df_immigration.join(df_cities, rsuffix="_city")
 
         airport_data = (
@@ -352,6 +353,7 @@ def run():
 
         df_airport = to_dataframe(airport_data)
 
+        df_immigration = df_immigration[df_immigration["i94port"].notna()]
         join_data = df_immigration.join(df_airport, rsuffix="_airport")
 
         join_data = to_pcollection(join_data, include_indexes=False)
