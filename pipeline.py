@@ -84,16 +84,16 @@ class AverageDictFn(beam.CombineFn):
 
         sum_all = {}
         count_all = {}
-        for sum in sums:
+        for ix, sum in enumerate(sums):
             for key in list(sum.keys()):
                 if key in sum_all:
                     sum_all[key] += sum[key]
-                    count_all[key] += 1
+                    count_all[key] += counts[ix][key]
                 else:
                     sum_all[key] = 0
                     count_all[key] = 0
                     sum_all[key] += sum[key]
-                    count_all[key] += 1
+                    count_all[key] += counts[ix][key]
         return sum_all, count_all
 
     def extract_output(self, accumulator):
@@ -158,8 +158,7 @@ class SplitCityData(beam.DoFn):
             (
                 state_code,
                 {
-                    "median_age": float(median_age)
-                    if median_age != "" else None,
+                    "median_age": float(median_age) if median_age != "" else None,
                     "male_population": int(male_population)
                     if male_population != ""
                     else None,
@@ -172,8 +171,7 @@ class SplitCityData(beam.DoFn):
                     "number_veterans": int(number_veterans)
                     if number_veterans != ""
                     else None,
-                    "foreign_born": int(foreign_born)
-                    if foreign_born != "" else None,
+                    "foreign_born": int(foreign_born) if foreign_born != "" else None,
                     "average_household_size": float(average_household_size)
                     if average_household_size != ""
                     else None,
